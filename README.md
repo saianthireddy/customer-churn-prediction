@@ -1,24 +1,21 @@
 # Customer Churn Prediction
 
+[![CI](https://github.com/saianthireddy/customer-churn-prediction/actions/workflows/ci.yml/badge.svg)](https://github.com/saianthireddy/customer-churn-prediction/actions/workflows/ci.yml) [![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue)](https://github.com/saianthireddy/customer-churn-prediction) [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
 **Customer Retention Intelligence & Churn Prediction Platform** — an end-to-end machine learning system that identifies at-risk customers and serves real-time churn predictions through a REST API.
 
 Built to support data-driven retention: customer usage, billing and support data flows through a cleaning and feature-engineering pipeline into scikit-learn classifiers, evaluated with cross-validation and served with FastAPI.
 
 ## Architecture
 
-```
-┌──────────────┐   ┌──────────────┐   ┌───────────────┐   ┌──────────────┐
-│  CSV extract │──▶│  Clean +     │──▶│  Train +      │──▶│  Persist     │
-│  (usage,     │   │  Feature     │   │  Evaluate     │   │  artifact    │
-│  billing,    │   │  Engineering │   │  (CV, F1,     │   │  (joblib)    │
-│  support)    │   │              │   │  ROC-AUC)     │   │              │
-└──────────────┘   └──────────────┘   └───────────────┘   └──────┬───────┘
-                                                                 │
-                                                    ┌────────────▼────────────┐
-                                                    │   FastAPI  /predict     │
-                                                    │   probability + risk    │
-                                                    │   band in real time     │
-                                                    └─────────────────────────┘
+```mermaid
+flowchart LR
+    A["CSV extract<br/>usage · billing · support"] --> B["Clean + validate<br/>dedupe, impute, clip"]
+    B --> C["Feature engineering<br/>ratios · flags"]
+    C --> D["Train<br/>LogReg / GradientBoosting"]
+    D --> E["Evaluate<br/>CV · F1 · ROC-AUC"]
+    E --> F[("joblib artifact")]
+    F --> G["FastAPI /predict<br/>probability + risk band"]
 ```
 
 ## Features
